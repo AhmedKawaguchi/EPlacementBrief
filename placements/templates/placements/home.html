@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EPlacement Brief</title>
+</head>
+<body>
+    <h1>EPlacement Brief</h1>
+    <p>Submit and manage your placement opportunities.</p>
+    <form method="post">
+    {% csrf_token %}
+
+    <p>
+        <label for="company_name">Company name:</label>
+        <input type="text" id="company_name" name="company_name" required>
+    </p>
+
+    <p>
+        <label for="position_title">Position title:</label>
+        <input type="text" id="position_title" name="position_title" required>
+    </p>
+
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>
