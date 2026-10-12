@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ page_name }} </title>
+    <title>{{ page_name }}</title>
 
     <style>
-        /* Page colours and layout */
         body {
             margin: 0;
             background: #f3f4f6;
@@ -22,7 +21,10 @@
         }
 
         header {
-            margin-bottom: 45px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
         }
 
         .site-name {
@@ -32,17 +34,26 @@
 
         h1 {
             margin-bottom: 24px;
-            font-size: 30px;
         }
 
         h2 {
-            margin: 0 0 20px;
-            font-size: 22px;
+            margin-top: 0;
+            font-size: 20px;
         }
 
-        /* White sections from the wireframe */
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #303238;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
         .section {
-            background: #ffffff;
+            background: white;
             padding: 24px;
             margin-bottom: 24px;
             border-radius: 8px;
@@ -50,8 +61,8 @@
 
         .row {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
         }
 
         .field {
@@ -62,6 +73,7 @@
             display: block;
             margin-bottom: 8px;
             font-size: 14px;
+            font-weight: bold;
         }
 
         input,
@@ -72,7 +84,7 @@
             padding: 12px;
             border: 1px solid #858b96;
             border-radius: 6px;
-            background: #ffffff;
+            background: white;
             color: #303238;
             font: inherit;
         }
@@ -82,12 +94,36 @@
             resize: vertical;
         }
 
-        input:focus,
-        textarea:focus,
-        select:focus,
-        button:focus-visible {
-            outline: 3px solid #365e9d;
-            outline-offset: 2px;
+        select[multiple] {
+            min-height: 150px;
+        }
+
+        .help {
+            color: #555b65;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .field-help {
+            display: block;
+            margin-top: 6px;
+            color: #555b65;
+            font-size: 13px;
+        }
+
+        .errorlist {
+            color: #a32121;
+            margin: 8px 0;
+            padding-left: 20px;
+            font-size: 14px;
+        }
+
+        .message {
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            background: #e7f3e9;
+            border: 1px solid #54805b;
+            border-radius: 6px;
         }
 
         .actions {
@@ -101,57 +137,26 @@
             border-radius: 7px;
             background: #f9dc75;
             color: #303238;
-            padding: 13px 25px;
+            padding: 12px 20px;
             font: inherit;
             font-weight: bold;
             cursor: pointer;
         }
 
-        button:hover {
-            background: #f1cd55;
+        .logout-button {
+            padding: 10px 16px;
         }
 
-        .message {
-            padding: 14px 18px;
-            margin-bottom: 24px;
-            background: #e7f3e9;
-            border: 1px solid #54805b;
-            border-radius: 6px;
-        }
-
-        .errorlist {
-            color: #a32121;
-            padding-left: 20px;
-            margin: 8px 0;
-            font-size: 14px;
-        }
-
-        .help {
-            color: #555b65;
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-
-        /* Stack fields on smaller screens */
         @media (max-width: 700px) {
             .row {
                 grid-template-columns: 1fr;
-                gap: 0;
-            }
-
-            .container {
-                padding: 20px 16px;
-            }
-
-            .section {
-                padding: 20px;
             }
 
             .actions {
                 flex-direction: column;
             }
 
-            button {
+            .actions button {
                 width: 100%;
             }
         }
@@ -160,22 +165,38 @@
 
 <body>
     <div class="container">
+
         <header>
-            <div class="site-name">EPlacement Brief</div>
+            <div class="site-name">
+                EPlacement Brief
+            </div>
+
+            <form method="post" action="{% url 'partner_logout' %}">
+                {% csrf_token %}
+
+                <button class="logout-button" type="submit">
+                    Sign out
+                </button>
+            </form>
         </header>
 
         <main>
-            <h1>Create Placement Brief</h1>
+
+            <a class="back-link" href="{% url 'my_briefs' %}">
+                ← Back to My Placement Briefs
+            </a>
+
+            <h1>{{ page_name }}</h1>
 
             {% for message in messages %}
-                <div class="message" role="status">
+                <div class="message">
                     {{ message }}
                 </div>
             {% endfor %}
 
             <p class="help">
                 You can save an incomplete Placement Brief as a draft.
-                All required fields must be completed before submitting.
+                Complete the required details before submitting it for approval.
             </p>
 
             <form method="post">
@@ -183,10 +204,12 @@
 
                 {{ form.non_field_errors }}
 
-                <section class="section">
+                <div class="section">
+
                     <h2>Partner details</h2>
 
                     <div class="row">
+
                         <div class="field">
                             {{ form.organisation_name.label_tag }}
                             {{ form.organisation_name }}
@@ -204,13 +227,17 @@
                             {{ form.contact_email }}
                             {{ form.contact_email.errors }}
                         </div>
-                    </div>
-                </section>
 
-                <section class="section">
+                    </div>
+
+                </div>
+
+                <div class="section">
+
                     <h2>Position details</h2>
 
                     <div class="row">
+
                         <div class="field">
                             {{ form.position_title.label_tag }}
                             {{ form.position_title }}
@@ -219,8 +246,9 @@
 
                         <div class="field">
                             <label for="{{ form.location.id_for_label }}">
-                                Location (optional)
+                                Location
                             </label>
+
                             {{ form.location }}
                             {{ form.location.errors }}
                         </div>
@@ -230,6 +258,7 @@
                             {{ form.number_of_positions }}
                             {{ form.number_of_positions.errors }}
                         </div>
+
                     </div>
 
                     <div class="field">
@@ -237,19 +266,102 @@
                         {{ form.position_description }}
                         {{ form.position_description.errors }}
                     </div>
-                </section>
+
+                </div>
+
+                <div class="section">
+
+                    <h2>Disciplines and duties</h2>
+
+                    <div class="row">
+
+                        <div class="field">
+                            <label for="{{ form.disciplines.id_for_label }}">
+                                Disciplines
+                            </label>
+
+                            {{ form.disciplines }}
+                            {{ form.disciplines.errors }}
+
+                            <span class="field-help">
+                                Hold Ctrl to select more than one discipline.
+                            </span>
+                        </div>
+
+                        <div class="field">
+                            <label for="{{ form.duties.id_for_label }}">
+                                Duties / Tasks
+                            </label>
+
+                            {{ form.duties }}
+                            {{ form.duties.errors }}
+
+                            <span class="field-help">
+                                Hold Ctrl to select more than one duty.
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
 
                 <div class="actions">
-                    <button type="submit" name="action" value="draft">
+
+                    <button
+                        type="submit"
+                        name="action"
+                        value="draft"
+                    >
                         Save Draft
                     </button>
 
-                    <button type="submit" name="action" value="submit">
+                    <button
+                        type="submit"
+                        name="action"
+                        value="submit"
+                    >
                         Submit Brief
                     </button>
+
                 </div>
+
             </form>
+
         </main>
+
     </div>
+
+    <script>
+        const disciplineSelect = document.getElementById("id_disciplines");
+        const dutySelect = document.getElementById("id_duties");
+
+        function filterDuties() {
+            const selectedDisciplines = Array.from(
+                disciplineSelect.selectedOptions
+            ).map(option => option.value);
+
+            Array.from(dutySelect.options).forEach(option => {
+                const disciplineId = option.dataset.discipline;
+
+                if (
+                    selectedDisciplines.length === 0 ||
+                    selectedDisciplines.includes(disciplineId)
+                ) {
+                    option.hidden = false;
+                } else {
+                    option.hidden = true;
+                    option.selected = false;
+                }
+            });
+        }
+
+        disciplineSelect.addEventListener(
+            "change",
+            filterDuties
+        );
+
+        filterDuties();
+    </script>
+
 </body>
 </html>

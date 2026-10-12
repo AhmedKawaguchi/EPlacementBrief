@@ -19,10 +19,16 @@
             padding: 30px 24px;
         }
 
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
         .site-name {
             font-size: 28px;
             font-weight: bold;
-            margin-bottom: 40px;
         }
 
         .page-header {
@@ -37,13 +43,17 @@
             margin: 0;
         }
 
-        .button {
+        .button,
+        .logout-button {
             background: #f9dc75;
             color: #303238;
             text-decoration: none;
             padding: 12px 20px;
             border-radius: 7px;
+            border: none;
+            font: inherit;
             font-weight: bold;
+            cursor: pointer;
         }
 
         .brief-list {
@@ -54,7 +64,7 @@
 
         .brief {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 150px;
+            grid-template-columns: 2fr 1fr 1fr 160px;
             gap: 20px;
             align-items: center;
             padding: 20px 24px;
@@ -96,6 +106,20 @@
             text-decoration: underline;
         }
 
+        .reuse-button {
+            border: none;
+            background: none;
+            padding: 0;
+            color: #303238;
+            font: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .reuse-button:hover {
+            text-decoration: underline;
+        }
+
         .message {
             padding: 14px 18px;
             margin-bottom: 20px;
@@ -126,14 +150,27 @@
 <body>
     <div class="container">
 
-        <div class="site-name">
-            EPlacement Brief
-        </div>
+        <header>
+            <div class="site-name">
+                EPlacement Brief
+            </div>
+
+            <form method="post" action="{% url 'partner_logout' %}">
+                {% csrf_token %}
+
+                <button class="logout-button" type="submit">
+                    Sign out
+                </button>
+            </form>
+        </header>
 
         <div class="page-header">
             <div>
                 <h1>My Placement Briefs</h1>
-                <p>View your Placement Briefs or continue a saved draft.</p>
+
+                <p>
+                    View your Placement Briefs or continue a saved draft.
+                </p>
             </div>
 
             <a class="button" href="{% url 'create_brief' %}">
@@ -178,13 +215,19 @@
                             Status<br>
 
                             {% if brief.status == "draft" %}
-                                <span class="status draft">Draft</span>
+                                <span class="status draft">
+                                    Draft
+                                </span>
 
                             {% elif brief.status == "submitted" %}
-                                <span class="status submitted">Submitted</span>
+                                <span class="status submitted">
+                                    Waiting for approval
+                                </span>
 
                             {% elif brief.status == "approved" %}
-                                <span class="status approved">Approved</span>
+                                <span class="status approved">
+                                    Approved
+                                </span>
                             {% endif %}
                         </div>
 
@@ -207,12 +250,20 @@
                                     View
                                 </a>
 
-                                <a
-                                    class="action-link"
-                                    href="{% url 'reuse_brief' brief.id %}"
+                                <form
+                                    method="post"
+                                    action="{% url 'reuse_brief' brief.id %}"
+                                    style="display: inline;"
                                 >
-                                    Reuse
-                                </a>
+                                    {% csrf_token %}
+
+                                    <button
+                                        class="reuse-button"
+                                        type="submit"
+                                    >
+                                        Reuse
+                                    </button>
+                                </form>
 
                             {% endif %}
                         </div>

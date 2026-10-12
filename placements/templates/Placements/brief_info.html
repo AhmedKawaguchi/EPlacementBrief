@@ -16,8 +16,31 @@
 
         main {
             max-width: 850px;
-            margin: 50px auto;
+            margin: 40px auto;
             padding: 24px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .site-name {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .logout-button {
+            border: none;
+            border-radius: 7px;
+            background: #f9dc75;
+            color: #303238;
+            padding: 10px 16px;
+            font: inherit;
+            font-weight: bold;
+            cursor: pointer;
         }
 
         .top-link {
@@ -57,7 +80,7 @@
             font-size: 18px;
             margin-top: 28px;
             margin-bottom: 18px;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #dddddd;
             padding-bottom: 8px;
         }
 
@@ -78,7 +101,7 @@
         .label {
             font-size: 13px;
             font-weight: bold;
-            color: #666;
+            color: #666666;
             margin-bottom: 4px;
         }
 
@@ -110,97 +133,171 @@
 
 <body>
 
-<main>
+    <main>
 
-    <a class="top-link" href="{% url 'my_briefs' %}">
-        ← Back to My Placement Briefs
-    </a>
+        <header>
+            <div class="site-name">
+                EPlacement Brief
+            </div>
 
-    <div class="card">
+            <form method="post" action="{% url 'partner_logout' %}">
+                {% csrf_token %}
 
-        <h1>
-            {{ brief.position_title|default:"Untitled Placement Brief" }}
-        </h1>
+                <button class="logout-button" type="submit">
+                    Sign out
+                </button>
+            </form>
+        </header>
 
-        <div class="status">
-            {{ brief.get_status_display }}
+        <a class="top-link" href="{% url 'my_briefs' %}">
+            ← Back to My Placement Briefs
+        </a>
+
+        <div class="card">
+
+            <h1>
+                {{ brief.position_title|default:"Untitled Placement Brief" }}
+            </h1>
+
+            <div class="status">
+                {{ brief.get_status_display }}
+            </div>
+
+            <h2>Partner details</h2>
+
+            <div class="details">
+
+                <div class="field">
+                    <div class="label">
+                        Organisation name
+                    </div>
+
+                    <div class="value">
+                        {{ brief.organisation_name|default:"-" }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="label">
+                        Contact name
+                    </div>
+
+                    <div class="value">
+                        {{ brief.contact_name|default:"-" }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="label">
+                        Contact email
+                    </div>
+
+                    <div class="value">
+                        {{ brief.contact_email|default:"-" }}
+                    </div>
+                </div>
+
+            </div>
+
+            <h2>Position details</h2>
+
+            <div class="details">
+
+                <div class="field">
+                    <div class="label">
+                        Position title
+                    </div>
+
+                    <div class="value">
+                        {{ brief.position_title|default:"-" }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="label">
+                        Location
+                    </div>
+
+                    <div class="value">
+                        {{ brief.location|default:"-" }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="label">
+                        Number of positions
+                    </div>
+
+                    <div class="value">
+                        {{ brief.number_of_positions }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="label">
+                        Submitted
+                    </div>
+
+                    <div class="value">
+                        {% if brief.submitted_at %}
+                            {{ brief.submitted_at|date:"d M Y, g:i A" }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="field full">
+                    <div class="label">
+                        Placement description
+                    </div>
+
+                    <div class="value">
+                        {{ brief.position_description|default:"-" }}
+                    </div>
+                </div>
+
+            </div>
+
+            <h2>Disciplines and duties</h2>
+
+            <div class="details">
+
+                <div class="field">
+                    <div class="label">
+                        Disciplines
+                    </div>
+
+                    <div class="value">
+                        {% for discipline in brief.disciplines.all %}
+                            {{ discipline.name }}
+                            {% if not forloop.last %}<br>{% endif %}
+                        {% empty %}
+                            -
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="label">
+                        Duties / Tasks
+                    </div>
+
+                    <div class="value">
+                        {% for duty in brief.duties.all %}
+                            {{ duty.name }}
+                            {% if not forloop.last %}<br>{% endif %}
+                        {% empty %}
+                            -
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+
         </div>
 
-        <h2>Partner details</h2>
-
-        <div class="details">
-
-            <div class="field">
-                <div class="label">Organisation name</div>
-                <div class="value">
-                    {{ brief.organisation_name|default:"-" }}
-                </div>
-            </div>
-
-            <div class="field">
-                <div class="label">Contact name</div>
-                <div class="value">
-                    {{ brief.contact_name|default:"-" }}
-                </div>
-            </div>
-
-            <div class="field">
-                <div class="label">Contact email</div>
-                <div class="value">
-                    {{ brief.contact_email|default:"-" }}
-                </div>
-            </div>
-
-        </div>
-
-        <h2>Position details</h2>
-
-        <div class="details">
-
-            <div class="field">
-                <div class="label">Position title</div>
-                <div class="value">
-                    {{ brief.position_title|default:"-" }}
-                </div>
-            </div>
-
-            <div class="field">
-                <div class="label">Location</div>
-                <div class="value">
-                    {{ brief.location|default:"-" }}
-                </div>
-            </div>
-
-            <div class="field">
-                <div class="label">Number of positions</div>
-                <div class="value">
-                    {{ brief.number_of_positions }}
-                </div>
-            </div>
-
-            <div class="field">
-                <div class="label">Submitted</div>
-                <div class="value">
-                    {% if brief.submitted_at %}
-                        {{ brief.submitted_at|date:"d M Y, g:i A" }}
-                    {% else %}
-                        -
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="field full">
-                <div class="label">Placement description</div>
-                <div class="value">
-                    {{ brief.position_description|default:"-" }}
-                </div>
-            </div>
-
-        </div>
-
-    </div>
-
-</main>
+    </main>
 
 </body>
 </html>

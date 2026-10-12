@@ -20,24 +20,42 @@
             padding: 24px;
         }
 
-        h1 {
+        .site-name {
             text-align: center;
             font-size: 28px;
-            margin-bottom: 4px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 26px;
+            margin-top: 0;
+            margin-bottom: 6px;
         }
 
         .subtitle {
             text-align: center;
-            margin-bottom: 32px;
+            color: #666666;
+            margin-bottom: 28px;
         }
 
         .field {
-            margin-bottom: 22px;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 7px;
+            font-size: 14px;
+            font-weight: bold;
         }
 
         input {
@@ -46,97 +64,103 @@
             padding: 12px;
             border: 1px solid #858b96;
             border-radius: 6px;
-            background: white;
-            color: #303238;
             font: inherit;
         }
 
         button {
             width: 100%;
-            padding: 13px;
             border: none;
             border-radius: 7px;
             background: #f9dc75;
             color: #303238;
+            padding: 13px;
             font: inherit;
             font-weight: bold;
             cursor: pointer;
         }
 
-        button:hover {
-            background: #f1cd55;
-        }
-
-        input:focus,
-        button:focus-visible,
-        a:focus-visible {
-            outline: 3px solid #365e9d;
-            outline-offset: 2px;
+        .message {
+            padding: 12px;
+            margin-bottom: 18px;
+            background: #e7f3e9;
+            border: 1px solid #54805b;
+            border-radius: 6px;
         }
 
         .errorlist {
             color: #a32121;
+            margin: 7px 0;
             padding-left: 20px;
-        }
-
-        .message {
-            background: #e7f3e9;
-            padding: 12px;
-            border-radius: 6px;
+            font-size: 14px;
         }
 
         .signup-link {
             text-align: center;
-            margin-top: 24px;
+            margin-top: 22px;
         }
 
-        a {
+        .signup-link a {
             color: #303238;
-        }
-
-        @media (max-width: 600px) {
-            main {
-                margin: 40px auto;
-            }
+            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
+
     <main>
-        <h1>EPlacement Brief</h1>
-        <p class="subtitle">Partner sign in</p>
 
-        {% for message in messages %}
-            <p class="message" role="status">{{ message }}</p>
-        {% endfor %}
+        <div class="site-name">
+            EPlacement Brief
+        </div>
 
-        <form method="post">
-            {% csrf_token %}
+        <div class="card">
 
-            {{ form.non_field_errors }}
+            <h1>Sign in</h1>
 
-            <div class="field">
-                {{ form.username.label_tag }}
-                {{ form.username }}
-                {{ form.username.errors }}
+            <div class="subtitle">
+                Sign in to continue.
             </div>
 
-            <div class="field">
-                {{ form.password.label_tag }}
-                {{ form.password }}
-                {{ form.password.errors }}
+            {% for message in messages %}
+                <div class="message">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                {{ form.non_field_errors }}
+
+                <div class="field">
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+                    {{ form.username.errors }}
+                </div>
+
+                <div class="field">
+                    {{ form.password.label_tag }}
+                    {{ form.password }}
+                    {{ form.password.errors }}
+                </div>
+
+                <button type="submit">
+                    Sign in
+                </button>
+
+            </form>
+
+            <div class="signup-link">
+                Industry partner?
+                <a href="{% url 'partner_signup' %}">
+                    Create an account
+                </a>
             </div>
 
-            <input type="hidden" name="next" value="{{ next }}">
+        </div>
 
-            <button type="submit">Sign in</button>
-        </form>
-
-        <p class="signup-link">
-            New partner?
-            <a href="{% url 'partner_signup' %}">Create an account</a>
-        </p>
     </main>
+
 </body>
 </html>
