@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in - EPlacement Brief</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #f3f4f6;
+            color: #303238;
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+        }
+
+        main {
+            max-width: 390px;
+            margin: 100px auto;
+            padding: 24px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .field {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #858b96;
+            border-radius: 6px;
+            background: white;
+            color: #303238;
+            font: inherit;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 7px;
+            background: #f9dc75;
+            color: #303238;
+            font: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #f1cd55;
+        }
+
+        input:focus,
+        button:focus-visible,
+        a:focus-visible {
+            outline: 3px solid #365e9d;
+            outline-offset: 2px;
+        }
+
+        .errorlist {
+            color: #a32121;
+            padding-left: 20px;
+        }
+
+        .message {
+            background: #e7f3e9;
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        a {
+            color: #303238;
+        }
+
+        @media (max-width: 600px) {
+            main {
+                margin: 40px auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>EPlacement Brief</h1>
+        <p class="subtitle">Partner sign in</p>
+
+        {% for message in messages %}
+            <p class="message" role="status">{{ message }}</p>
+        {% endfor %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form.non_field_errors }}
+
+            <div class="field">
+                {{ form.username.label_tag }}
+                {{ form.username }}
+                {{ form.username.errors }}
+            </div>
+
+            <div class="field">
+                {{ form.password.label_tag }}
+                {{ form.password }}
+                {{ form.password.errors }}
+            </div>
+
+            <input type="hidden" name="next" value="{{ next }}">
+
+            <button type="submit">Sign in</button>
+        </form>
+
+        <p class="signup-link">
+            New partner?
+            <a href="{% url 'partner_signup' %}">Create an account</a>
+        </p>
+    </main>
+</body>
+</html>
