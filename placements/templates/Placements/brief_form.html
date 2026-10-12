@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Placement Brief</title>
+
+    <style>
+        /* Page colours and layout */
+        body {
+            margin: 0;
+            background: #f3f4f6;
+            color: #303238;
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 30px 24px;
+        }
+
+        header {
+            margin-bottom: 45px;
+        }
+
+        .site-name {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        h1 {
+            margin-bottom: 24px;
+            font-size: 30px;
+        }
+
+        h2 {
+            margin: 0 0 20px;
+            font-size: 22px;
+        }
+
+        /* White sections from the wireframe */
+        .section {
+            background: #ffffff;
+            padding: 24px;
+            margin-bottom: 24px;
+            border-radius: 8px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 24px;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input,
+        textarea,
+        select {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #858b96;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #303238;
+            font: inherit;
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus,
+        button:focus-visible {
+            outline: 3px solid #365e9d;
+            outline-offset: 2px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        button {
+            border: none;
+            border-radius: 7px;
+            background: #f9dc75;
+            color: #303238;
+            padding: 13px 25px;
+            font: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #f1cd55;
+        }
+
+        .message {
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            background: #e7f3e9;
+            border: 1px solid #54805b;
+            border-radius: 6px;
+        }
+
+        .errorlist {
+            color: #a32121;
+            padding-left: 20px;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        .help {
+            color: #555b65;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        /* Stack fields on smaller screens */
+        @media (max-width: 700px) {
+            .row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .container {
+                padding: 20px 16px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="site-name">EPlacement Brief</div>
+        </header>
+
+        <main>
+            <h1>Create Placement Brief</h1>
+
+            {% for message in messages %}
+                <div class="message" role="status">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            <p class="help">All fields are required.</p>
+
+            <form method="post">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                <section class="section">
+                    <h2>Partner details</h2>
+
+                    <div class="row">
+                        <div class="field">
+                            {{ form.organisation_name.label_tag }}
+                            {{ form.organisation_name }}
+                            {{ form.organisation_name.errors }}
+                        </div>
+
+                        <div class="field">
+                            {{ form.contact_name.label_tag }}
+                            {{ form.contact_name }}
+                            {{ form.contact_name.errors }}
+                        </div>
+
+                        <div class="field">
+                            {{ form.contact_email.label_tag }}
+                            {{ form.contact_email }}
+                            {{ form.contact_email.errors }}
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h2>Position details</h2>
+
+                    <div class="row">
+                        <div class="field">
+                            {{ form.position_title.label_tag }}
+                            {{ form.position_title }}
+                            {{ form.position_title.errors }}
+                        </div>
+
+                        <div class="field">
+                            {{ form.number_of_positions.label_tag }}
+                            {{ form.number_of_positions }}
+                            {{ form.number_of_positions.errors }}
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        {{ form.position_description.label_tag }}
+                        {{ form.position_description }}
+                        {{ form.position_description.errors }}
+                    </div>
+                </section>
+
+                <div class="actions">
+                    <button type="submit">Submit brief</button>
+                </div>
+            </form>
+        </main>
+    </div>
+</body>
+</html>
