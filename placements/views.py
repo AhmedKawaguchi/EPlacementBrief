@@ -43,7 +43,7 @@ def create_brief(request):
                         "placements/brief_form.html",
                         {
                             "form": form,
-                            "page_title": "Create Placement Brief",
+                            "page_name": "Create Placement Brief",
                         }
                     )
 
@@ -71,7 +71,7 @@ def create_brief(request):
         "placements/brief_form.html",
         {
             "form": form,
-            "page_title": "Create Placement Brief",
+            "page_name": "Create Placement Brief",
         }
     )
 
@@ -87,6 +87,54 @@ def my_briefs(request):
         request,
         "placements/my_briefs.html",
         {"briefs": briefs}
+    )
+
+
+# Shows one Placement Brief as a read-only page
+@login_required(login_url="partner_login")
+def brief_detail(request, brief_id):
+    brief = get_object_or_404(
+        PlacementBrief,
+        id=brief_id,
+        owner=request.user
+    )
+
+    return render(
+        request,
+        "placements/brief_info.html",
+        {"brief": brief}
+    )
+
+
+# Creates a new draft using an existing Placement Brief
+@login_required(login_url="partner_login")
+def reuse_brief(request, brief_id):
+    original = get_object_or_404(
+        PlacementBrief,
+        id=brief_id,
+        owner=request.user
+    )
+
+    new_brief = PlacementBrief.objects.create(
+        owner=request.user,
+        status="draft",
+        organisation_name=original.organisation_name,
+        contact_name=original.contact_name,
+        contact_email=original.contact_email,
+        position_title=original.position_title,
+        location=original.location,
+        position_description=original.position_description,
+        number_of_positions=original.number_of_positions,
+    )
+
+    messages.success(
+        request,
+        "A new draft was created from the previous Placement Brief."
+    )
+
+    return redirect(
+        "edit_brief",
+        brief_id=new_brief.id
     )
 
 
@@ -135,7 +183,7 @@ def edit_brief(request, brief_id):
                         "placements/brief_form.html",
                         {
                             "form": form,
-                            "page_title": "Continue Placement Brief",
+                            "page_name": "Continue Placement Brief",
                         }
                     )
 
@@ -162,7 +210,7 @@ def edit_brief(request, brief_id):
         "placements/brief_form.html",
         {
             "form": form,
-            "page_title": "Continue Placement Brief",
+            "page_name": "Continue Placement Brief",
         }
     )
 
