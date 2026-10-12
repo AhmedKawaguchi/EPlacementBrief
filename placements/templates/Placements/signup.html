@@ -16,28 +16,46 @@
 
         main {
             max-width: 390px;
-            margin: 70px auto;
+            margin: 80px auto;
             padding: 24px;
+        }
+
+        .site-name {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         h1 {
             text-align: center;
-            font-size: 28px;
-            margin-bottom: 4px;
+            font-size: 26px;
+            margin-top: 0;
+            margin-bottom: 6px;
         }
 
         .subtitle {
             text-align: center;
-            margin-bottom: 32px;
+            color: #666666;
+            margin-bottom: 28px;
         }
 
         .field {
-            margin-bottom: 22px;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 7px;
+            font-weight: bold;
+            font-size: 14px;
         }
 
         input {
@@ -46,100 +64,112 @@
             padding: 12px;
             border: 1px solid #858b96;
             border-radius: 6px;
-            background: #ffffff;
-            color: #303238;
             font: inherit;
         }
 
         button {
             width: 100%;
-            padding: 13px;
             border: none;
             border-radius: 7px;
             background: #f9dc75;
             color: #303238;
+            padding: 13px;
             font: inherit;
             font-weight: bold;
             cursor: pointer;
         }
 
-        button:hover {
-            background: #f1cd55;
-        }
-
-        input:focus,
-        button:focus-visible,
-        a:focus-visible {
-            outline: 3px solid #365e9d;
-            outline-offset: 2px;
-        }
-
-        .help {
-            margin-top: 8px;
-            color: #555b65;
-            font-size: 13px;
-        }
-
-        .help ul {
-            margin: 8px 0;
-            padding-left: 20px;
-        }
-
         .errorlist {
             color: #a32121;
+            margin: 7px 0;
             padding-left: 20px;
             font-size: 14px;
         }
 
-        .signup-link {
+        .login-link {
             text-align: center;
-            margin-top: 24px;
+            margin-top: 22px;
         }
 
-        a {
+        .login-link a {
             color: #303238;
+            font-weight: bold;
         }
 
-        @media (max-width: 600px) {
-            main {
-                margin: 30px auto;
-            }
+        .helptext {
+            display: block;
+            margin-top: 6px;
+            color: #666666;
+            font-size: 12px;
+        }
+
+        ul {
+            font-size: 12px;
         }
     </style>
 </head>
 
 <body>
+
     <main>
-        <h1>EPlacement Brief</h1>
-        <p class="subtitle">Create a partner account</p>
 
-        <form method="post">
-            {% csrf_token %}
+        <div class="site-name">
+            EPlacement Brief
+        </div>
 
-            {{ form.non_field_errors }}
+        <div class="card">
 
-            {% for field in form %}
+            <h1>Create account</h1>
+
+            <div class="subtitle">
+                Create an industry partner account.
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+
+                {{ form.non_field_errors }}
+
                 <div class="field">
-                    {{ field.label_tag }}
-                    {{ field }}
-
-                    {% if field.help_text %}
-                        <div class="help" id="{{ field.auto_id }}_helptext">
-                            {{ field.help_text|safe }}
-                        </div>
-                    {% endif %}
-
-                    {{ field.errors }}
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+                    {{ form.username.errors }}
                 </div>
-            {% endfor %}
 
-            <button type="submit">Create account</button>
-        </form>
+                <div class="field">
+                    {{ form.password1.label_tag }}
+                    {{ form.password1 }}
+                    {{ form.password1.errors }}
 
-        <p class="signup-link">
-            Already have an account?
-            <a href="{% url 'partner_login' %}">Sign in</a>
-        </p>
+                    {% if form.password1.help_text %}
+                        <span class="helptext">
+                            {{ form.password1.help_text }}
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div class="field">
+                    {{ form.password2.label_tag }}
+                    {{ form.password2 }}
+                    {{ form.password2.errors }}
+                </div>
+
+                <button type="submit">
+                    Create account
+                </button>
+
+            </form>
+
+            <div class="login-link">
+                Already have an account?
+                <a href="{% url 'partner_login' %}">
+                    Sign in
+                </a>
+            </div>
+
+        </div>
+
     </main>
+
 </body>
 </html>

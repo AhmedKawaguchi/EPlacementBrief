@@ -11,7 +11,6 @@
             background: #f3f4f6;
             color: #303238;
             font-family: Arial, sans-serif;
-            line-height: 1.5;
         }
 
         .container {
@@ -21,7 +20,10 @@
         }
 
         header {
-            margin-bottom: 45px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
         }
 
         .site-name {
@@ -39,32 +41,30 @@
 
         h1 {
             margin: 0;
-            font-size: 30px;
         }
 
-        .button {
-            display: inline-block;
-            padding: 12px 20px;
+        .button,
+        .logout-button {
             background: #f9dc75;
             color: #303238;
             text-decoration: none;
+            padding: 12px 20px;
             border-radius: 7px;
+            border: none;
+            font: inherit;
             font-weight: bold;
-        }
-
-        .button:hover {
-            background: #f1cd55;
+            cursor: pointer;
         }
 
         .brief-list {
-            background: #ffffff;
+            background: white;
             border-radius: 8px;
             overflow: hidden;
         }
 
         .brief {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 120px;
+            grid-template-columns: 2fr 1fr 1fr 160px;
             gap: 20px;
             align-items: center;
             padding: 20px 24px;
@@ -95,40 +95,53 @@
             color: #347343;
         }
 
-        .resume {
+        .action-link {
             color: #303238;
             font-weight: bold;
+            text-decoration: none;
+            margin-right: 10px;
         }
 
-        .empty {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 8px;
+        .action-link:hover {
+            text-decoration: underline;
+        }
+
+        .reuse-button {
+            border: none;
+            background: none;
+            padding: 0;
+            color: #303238;
+            font: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .reuse-button:hover {
+            text-decoration: underline;
         }
 
         .message {
             padding: 14px 18px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             background: #e7f3e9;
             border: 1px solid #54805b;
             border-radius: 6px;
         }
 
+        .empty {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+        }
+
         @media (max-width: 700px) {
             .page-header {
-                align-items: flex-start;
                 flex-direction: column;
+                align-items: flex-start;
             }
 
             .brief {
                 grid-template-columns: 1fr;
-                gap: 8px;
-            }
-
-            .button {
-                width: 100%;
-                box-sizing: border-box;
-                text-align: center;
             }
         }
     </style>
@@ -136,97 +149,139 @@
 
 <body>
     <div class="container">
+
         <header>
-            <div class="site-name">EPlacement Brief</div>
-        </header>
-
-        <main>
-            <div class="page-header">
-                <div>
-                    <h1>My Placement Briefs</h1>
-                    <p>View your Placement Briefs or continue a saved draft.</p>
-                </div>
-
-                <a class="button" href="{% url 'create_brief' %}">
-                    Create new brief
-                </a>
+            <div class="site-name">
+                EPlacement Brief
             </div>
 
-            {% for message in messages %}
-                <div class="message" role="status">
-                    {{ message }}
-                </div>
-            {% endfor %}
+            <form method="post" action="{% url 'partner_logout' %}">
+                {% csrf_token %}
 
-            {% if briefs %}
-                <div class="brief-list">
+                <button class="logout-button" type="submit">
+                    Sign out
+                </button>
+            </form>
+        </header>
 
-                    {% for brief in briefs %}
-                        <div class="brief">
+        <div class="page-header">
+            <div>
+                <h1>My Placement Briefs</h1>
 
-                            <div>
-                                <div class="brief-title">
-                                    {% if brief.position_title %}
-                                        {{ brief.position_title }}
-                                    {% else %}
-                                        Untitled Placement Brief
-                                    {% endif %}
-                                </div>
+                <p>
+                    View your Placement Briefs or continue a saved draft.
+                </p>
+            </div>
 
-                                <small>
-                                    {{ brief.organisation_name|default:"No organisation entered" }}
-                                </small>
-                            </div>
+            <a class="button" href="{% url 'create_brief' %}">
+                Create new brief
+            </a>
+        </div>
 
-                            <div>
-                                Updated<br>
-                                {{ brief.updated_at|date:"d M Y" }}
-                            </div>
+        {% for message in messages %}
+            <div class="message">
+                {{ message }}
+            </div>
+        {% endfor %}
 
-                            <div>
-                                Status<br>
+        {% if briefs %}
 
-                                {% if brief.status == "draft" %}
-                                    <span class="status draft">
-                                        Draft
-                                    </span>
+            <div class="brief-list">
 
-                                {% elif brief.status == "submitted" %}
-                                    <span class="status submitted">
-                                        Submitted
-                                    </span>
+                {% for brief in briefs %}
 
-                                {% elif brief.status == "approved" %}
-                                    <span class="status approved">
-                                        Approved
-                                    </span>
-                                {% endif %}
-                            </div>
+                    <div class="brief">
 
-                            <div>
-                                {% if brief.status == "draft" %}
-                                    <a
-                                        class="resume"
-                                        href="{% url 'edit_brief' brief.id %}"
-                                    >
-                                        Resume
-                                    </a>
+                        <div>
+                            <div class="brief-title">
+                                {% if brief.position_title %}
+                                    {{ brief.position_title }}
                                 {% else %}
-                                    -
+                                    Untitled Placement Brief
                                 {% endif %}
                             </div>
 
+                            <small>
+                                {{ brief.organisation_name|default:"No organisation entered" }}
+                            </small>
                         </div>
-                    {% endfor %}
 
-                </div>
+                        <div>
+                            Updated<br>
+                            {{ brief.updated_at|date:"d M Y" }}
+                        </div>
 
-            {% else %}
-                <div class="empty">
-                    <p>You have not created any Placement Briefs yet.</p>
-                </div>
-            {% endif %}
-        </main>
+                        <div>
+                            Status<br>
+
+                            {% if brief.status == "draft" %}
+                                <span class="status draft">
+                                    Draft
+                                </span>
+
+                            {% elif brief.status == "submitted" %}
+                                <span class="status submitted">
+                                    Waiting for approval
+                                </span>
+
+                            {% elif brief.status == "approved" %}
+                                <span class="status approved">
+                                    Approved
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            {% if brief.status == "draft" %}
+
+                                <a
+                                    class="action-link"
+                                    href="{% url 'edit_brief' brief.id %}"
+                                >
+                                    Resume
+                                </a>
+
+                            {% else %}
+
+                                <a
+                                    class="action-link"
+                                    href="{% url 'brief_detail' brief.id %}"
+                                >
+                                    View
+                                </a>
+
+                                <form
+                                    method="post"
+                                    action="{% url 'reuse_brief' brief.id %}"
+                                    style="display: inline;"
+                                >
+                                    {% csrf_token %}
+
+                                    <button
+                                        class="reuse-button"
+                                        type="submit"
+                                    >
+                                        Reuse
+                                    </button>
+                                </form>
+
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty">
+                You have not created any Placement Briefs yet.
+            </div>
+
+        {% endif %}
+
     </div>
 </body>
 </html>
