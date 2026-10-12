@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Placement Brief</title>
+    <title>{{ page_name }} </title>
 
     <style>
         /* Page colours and layout */
@@ -93,6 +93,7 @@
         .actions {
             display: flex;
             justify-content: flex-end;
+            gap: 12px;
         }
 
         button {
@@ -146,6 +147,10 @@
                 padding: 20px;
             }
 
+            .actions {
+                flex-direction: column;
+            }
+
             button {
                 width: 100%;
             }
@@ -168,10 +173,14 @@
                 </div>
             {% endfor %}
 
-            <p class="help">All fields except location are required.</p>
+            <p class="help">
+                You can save an incomplete Placement Brief as a draft.
+                All required fields must be completed before submitting.
+            </p>
 
             <form method="post">
                 {% csrf_token %}
+
                 {{ form.non_field_errors }}
 
                 <section class="section">
@@ -207,13 +216,15 @@
                             {{ form.position_title }}
                             {{ form.position_title.errors }}
                         </div>
+
                         <div class="field">
-                        <label for="{{ form.location.id_for_label }}">
-                         Location (optional)
-                        </label>
-                        {{ form.location }}
-                        {{ form.location.errors }}
+                            <label for="{{ form.location.id_for_label }}">
+                                Location (optional)
+                            </label>
+                            {{ form.location }}
+                            {{ form.location.errors }}
                         </div>
+
                         <div class="field">
                             {{ form.number_of_positions.label_tag }}
                             {{ form.number_of_positions }}
@@ -229,7 +240,13 @@
                 </section>
 
                 <div class="actions">
-                    <button type="submit">Submit brief</button>
+                    <button type="submit" name="action" value="draft">
+                        Save Draft
+                    </button>
+
+                    <button type="submit" name="action" value="submit">
+                        Submit Brief
+                    </button>
                 </div>
             </form>
         </main>

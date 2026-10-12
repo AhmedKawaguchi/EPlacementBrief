@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Placement Briefs</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #f3f4f6;
+            color: #303238;
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 24px;
+        }
+
+        header {
+            margin-bottom: 45px;
+        }
+
+        .site-name {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #f9dc75;
+            color: #303238;
+            text-decoration: none;
+            border-radius: 7px;
+            font-weight: bold;
+        }
+
+        .button:hover {
+            background: #f1cd55;
+        }
+
+        .brief-list {
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .brief {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 120px;
+            gap: 20px;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid #dddddd;
+        }
+
+        .brief:last-child {
+            border-bottom: none;
+        }
+
+        .brief-title {
+            font-weight: bold;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .draft {
+            color: #8a6500;
+        }
+
+        .submitted {
+            color: #365e9d;
+        }
+
+        .approved {
+            color: #347343;
+        }
+
+        .resume {
+            color: #303238;
+            font-weight: bold;
+        }
+
+        .empty {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+        }
+
+        .message {
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            background: #e7f3e9;
+            border: 1px solid #54805b;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 700px) {
+            .page-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .brief {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .button {
+                width: 100%;
+                box-sizing: border-box;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="site-name">EPlacement Brief</div>
+        </header>
+
+        <main>
+            <div class="page-header">
+                <div>
+                    <h1>My Placement Briefs</h1>
+                    <p>View your Placement Briefs or continue a saved draft.</p>
+                </div>
+
+                <a class="button" href="{% url 'create_brief' %}">
+                    Create new brief
+                </a>
+            </div>
+
+            {% for message in messages %}
+                <div class="message" role="status">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% if briefs %}
+                <div class="brief-list">
+
+                    {% for brief in briefs %}
+                        <div class="brief">
+
+                            <div>
+                                <div class="brief-title">
+                                    {% if brief.position_title %}
+                                        {{ brief.position_title }}
+                                    {% else %}
+                                        Untitled Placement Brief
+                                    {% endif %}
+                                </div>
+
+                                <small>
+                                    {{ brief.organisation_name|default:"No organisation entered" }}
+                                </small>
+                            </div>
+
+                            <div>
+                                Updated<br>
+                                {{ brief.updated_at|date:"d M Y" }}
+                            </div>
+
+                            <div>
+                                Status<br>
+
+                                {% if brief.status == "draft" %}
+                                    <span class="status draft">
+                                        Draft
+                                    </span>
+
+                                {% elif brief.status == "submitted" %}
+                                    <span class="status submitted">
+                                        Submitted
+                                    </span>
+
+                                {% elif brief.status == "approved" %}
+                                    <span class="status approved">
+                                        Approved
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                {% if brief.status == "draft" %}
+                                    <a
+                                        class="resume"
+                                        href="{% url 'edit_brief' brief.id %}"
+                                    >
+                                        Resume
+                                    </a>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </div>
+
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+                <div class="empty">
+                    <p>You have not created any Placement Briefs yet.</p>
+                </div>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>

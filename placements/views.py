@@ -1,17 +1,198 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .forms import EPlacementForm
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+
+from .forms import EPlacementForm, PartnerSignupForm, PartnerLoginForm
+from .models import PlacementBrief
 
 
+# Creates a new Placement Brief
+@login_required(login_url="partner_login")
 def create_brief(request):
     if request.method == "POST":
         form = EPlacementForm(request.POST)
 
         if form.is_valid():
-            form.save()
-            messages.success(request, "Placement brief submitted successfully.")
-            return redirect("create_brief")
+            action = request.POST.get("action")
+
+            # These fields must be completed before final submission
+            if action == "submit":
+                required_fields = [
+                    "organisation_name",
+                    "contact_name",
+                    "contact_email",
+                    "position_title",
+                    "position_description",
+                ]
+
+                missing_fields = False
+
+                for field in required_fields:
+                    if not form.cleaned_data.get(field):
+                        form.add_error(
+                            field,
+                            "This field is required before submitting."
+                        )
+                        missing_fields = True
+
+                if missing_fields:
+                    return render(
+                        request,
+                        "placements/brief_form.html",
+                        {
+                            "form": form,
+                            "page_title": "Create Placement Brief",
+                        }
+                    )
+
+            brief = form.save(commit=False)
+            brief.owner = request.user
+
+            if action == "submit":
+                brief.status = "submitted"
+                brief.submitted_at = timezone.now()
+                message = "Placement Brief submitted successfully."
+            else:
+                brief.status = "draft"
+                message = "Draft saved successfully."
+
+            brief.save()
+
+            messages.success(request, message)
+            return redirect("my_briefs")
+
     else:
         form = EPlacementForm()
 
-    return render(request, "placements/brief_form.html", {"form": form})
+    return render(
+        request,
+        "placements/brief_form.html",
+        {
+            "form": form,
+            "page_title": "Create Placement Brief",
+        }
+    )
+
+
+# Shows the logged-in partner's Placement Briefs
+@login_required(login_url="partner_login")
+def my_briefs(request):
+    briefs = PlacementBrief.objects.filter(
+        owner=request.user
+    ).order_by("-updated_at")
+
+    return render(
+        request,
+        "placements/my_briefs.html",
+        {"briefs": briefs}
+    )
+
+
+# Allows the partner to reopen and continue one of their drafts
+@login_required(login_url="partner_login")
+def edit_brief(request, brief_id):
+    brief = get_object_or_404(
+        PlacementBrief,
+        id=brief_id,
+        owner=request.user,
+        status="draft"
+    )
+
+    if request.method == "POST":
+        form = EPlacementForm(
+            request.POST,
+            instance=brief
+        )
+
+        if form.is_valid():
+            action = request.POST.get("action")
+
+            # Final submission requires the main fields
+            if action == "submit":
+                required_fields = [
+                    "organisation_name",
+                    "contact_name",
+                    "contact_email",
+                    "position_title",
+                    "position_description",
+                ]
+
+                missing_fields = False
+
+                for field in required_fields:
+                    if not form.cleaned_data.get(field):
+                        form.add_error(
+                            field,
+                            "This field is required before submitting."
+                        )
+                        missing_fields = True
+
+                if missing_fields:
+                    return render(
+                        request,
+                        "placements/brief_form.html",
+                        {
+                            "form": form,
+                            "page_title": "Continue Placement Brief",
+                        }
+                    )
+
+            brief = form.save(commit=False)
+
+            if action == "submit":
+                brief.status = "submitted"
+                brief.submitted_at = timezone.now()
+                message = "Placement Brief submitted successfully."
+            else:
+                brief.status = "draft"
+                message = "Draft updated successfully."
+
+            brief.save()
+
+            messages.success(request, message)
+            return redirect("my_briefs")
+
+    else:
+        form = EPlacementForm(instance=brief)
+
+    return render(
+        request,
+        "placements/brief_form.html",
+        {
+            "form": form,
+            "page_title": "Continue Placement Brief",
+        }
+    )
+
+
+# Creates a partner account and sends them to the login page
+def partner_signup(request):
+    if request.method == "POST":
+        form = PartnerSignupForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(
+                request,
+                "Account created. Please sign in."
+            )
+
+            return redirect("partner_login")
+
+    else:
+        form = PartnerSignupForm()
+
+    return render(
+        request,
+        "placements/signup.html",
+        {"form": form}
+    )
+
+
+# Uses Django's login system to sign in a partner
+class PartnerLoginView(LoginView):
+    authentication_form = PartnerLoginForm
+    template_name = "placements/login.html"

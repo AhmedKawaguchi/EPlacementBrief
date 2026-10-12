@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create account - EPlacement Brief</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #f3f4f6;
+            color: #303238;
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+        }
+
+        main {
+            max-width: 390px;
+            margin: 70px auto;
+            padding: 24px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .field {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #858b96;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #303238;
+            font: inherit;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 7px;
+            background: #f9dc75;
+            color: #303238;
+            font: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #f1cd55;
+        }
+
+        input:focus,
+        button:focus-visible,
+        a:focus-visible {
+            outline: 3px solid #365e9d;
+            outline-offset: 2px;
+        }
+
+        .help {
+            margin-top: 8px;
+            color: #555b65;
+            font-size: 13px;
+        }
+
+        .help ul {
+            margin: 8px 0;
+            padding-left: 20px;
+        }
+
+        .errorlist {
+            color: #a32121;
+            padding-left: 20px;
+            font-size: 14px;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        a {
+            color: #303238;
+        }
+
+        @media (max-width: 600px) {
+            main {
+                margin: 30px auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>EPlacement Brief</h1>
+        <p class="subtitle">Create a partner account</p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form.non_field_errors }}
+
+            {% for field in form %}
+                <div class="field">
+                    {{ field.label_tag }}
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <div class="help" id="{{ field.auto_id }}_helptext">
+                            {{ field.help_text|safe }}
+                        </div>
+                    {% endif %}
+
+                    {{ field.errors }}
+                </div>
+            {% endfor %}
+
+            <button type="submit">Create account</button>
+        </form>
+
+        <p class="signup-link">
+            Already have an account?
+            <a href="{% url 'partner_login' %}">Sign in</a>
+        </p>
+    </main>
+</body>
+</html>
