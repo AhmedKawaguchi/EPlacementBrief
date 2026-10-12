@@ -10,6 +10,7 @@ class EPlacementForm(forms.ModelForm):
             "contact_name",
             "contact_email",
             "position_title",
+            "location",
             "position_description",
             "number_of_positions",
         ]
