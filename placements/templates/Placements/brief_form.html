@@ -168,7 +168,7 @@
                 </div>
             {% endfor %}
 
-            <p class="help">All fields are required.</p>
+            <p class="help">All fields except location are required.</p>
 
             <form method="post">
                 {% csrf_token %}
@@ -207,7 +207,13 @@
                             {{ form.position_title }}
                             {{ form.position_title.errors }}
                         </div>
-
+                        <div class="field">
+                        <label for="{{ form.location.id_for_label }}">
+                         Location (optional)
+                        </label>
+                        {{ form.location }}
+                        {{ form.location.errors }}
+                        </div>
                         <div class="field">
                             {{ form.number_of_positions.label_tag }}
                             {{ form.number_of_positions }}
